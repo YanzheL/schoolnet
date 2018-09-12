@@ -2,18 +2,22 @@
 
 from argparse import ArgumentParser
 
+from common_utils_py.logger_router import LoggerRouter
 from net_client import NetClient
 
-from common_utils_py.logger_router import LoggerRouter
 
 def main(argv):
-    client = NetClient(argv.username, argv.password)
-    if argv.method == 'login':
-        client.login()
-    else:
-        client.logout()
-
-    LoggerRouter().stop()
+    try:
+        client = NetClient(argv.username, argv.password)
+        if argv.method == 'login':
+            client.login()
+        else:
+            client.logout()
+    except:
+        import traceback
+        traceback.print_exc()
+    finally:
+        LoggerRouter().stop()
 
 
 if __name__ == '__main__':
@@ -24,7 +28,6 @@ if __name__ == '__main__':
     parser.add_argument(
         '-p', '--password', required=True, type=str
     )
-
     parser.add_argument(
         '-m', '--method', required=True, choices=['login', 'logout']
     )

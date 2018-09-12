@@ -1,10 +1,11 @@
-from urllib.parse import *
-from argparse import ArgumentParser
-import requests
+import os
 import re
+from urllib.parse import *
+
+import requests
+
 from common_utils_py.helpers import *
 from common_utils_py.logger_router import LoggerRouter
-import os
 
 logger = LoggerRouter().getLogger(__name__)
 
@@ -82,9 +83,6 @@ class NetClient(object):
             return self._action('login')
         else:
             logger.info('No new redir_url found, maybe we are healthy')
-            return
-
-        # print('fuck')
 
     def _logout(self):
         self._action('logout')
@@ -97,7 +95,7 @@ class NetClient(object):
                 logger.info('Use last redir_url')
             else:
                 self.redir_url = None
-                logger.warning('Cannot read last_url, maybe updated later')
+                logger.warning('Cannot read last_url, maybe update later')
         else:
             with open('last_url', 'w') as f:
                 f.write(url)
@@ -113,14 +111,10 @@ class NetClient(object):
             'method': method
         }
         resp = requests.post(self.gateway, data=self.post_params, params=get_param, cookies=self.cookies)
-
         resp_json = resp.json()
-
         success = resp_json['result'] == 'success'
-
         if success:
             logger.info('Action {} success, response = {}'.format(method, resp_json))
         else:
             logger.error('Action {} failed, response = {}'.format(method, resp_json))
-
         return success
